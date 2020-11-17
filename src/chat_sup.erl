@@ -25,11 +25,21 @@ start_link() ->
 %%                  shutdown => shutdown(), % optional
 %%                  type => worker(),       % optional
 %%                  modules => modules()}   % optional
+
+
+
 init([]) ->
+%%    my_gen_server:start_link(),
     SupFlags = #{strategy => one_for_all,
                  intensity => 0,
                  period => 1},
-    ChildSpecs = [],
+    ChildSpecs = [{
+        my_gen_server,
+        {my_gen_server,start_link,[]},
+        permanent,
+        5000,
+        worker,
+        [my_gen_server]}],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions

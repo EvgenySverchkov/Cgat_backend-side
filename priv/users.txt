@@ -1,0 +1,4 @@
+#{id=>1, name=> <<"Alex">>, password=> <<"123456">>}.
+#{id=>2, name=> <<"Genadii">>, password=> <<"123456">>}.
+#{id=>3, name=> <<"John Doe">>, password=> <<"123456">>}.
+#{id=>4, name=> <<"Mary">>, password=> <<"123456">>}.

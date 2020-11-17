@@ -5,7 +5,10 @@
   {mod, {chat_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    cowboy,
+    sync,
+    jsone
    ]},
   {env,[]},
   {modules, []},
