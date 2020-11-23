@@ -86,7 +86,6 @@ method_handler(<<"get_history">>, #{<<"login">> := LoginTo}, State) ->
 method_handler(<<"send_msg">>, #{<<"text">> := <<>>, <<"date">> := Date, <<"to">> := ToUserLogin}, State) ->
     {ok,State};
 method_handler(<<"send_msg">>, #{<<"text">> := MsgText, <<"date">> := Date, <<"to">> := ToUserLogin}, State) ->
-    io:format("~p", [MsgText]),
     CurrUserLogin = proplists:get_value(user_login, State),
     CurrUserIdFromEts = ets:lookup_element(users, CurrUserLogin, #user.id),
     ToUserIdFromEts = ets:lookup_element(users, ToUserLogin, #user.id),

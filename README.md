@@ -3,7 +3,17 @@ chat
 
 An OTP application
 
-Build
+Instructions for running locally
 -----
+Clone a project from the directory:  
 
-    $ rebar3 compile
+https://github.com/EvgenySverchkov/chat_backend-side<br>
+
+Open the folder with the cloned project and in the Ubuntu command line run:
+
+    $make console
+
+Server run on:
+
+```http://localhost:8080/```
+    
