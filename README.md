@@ -5,6 +5,8 @@ An OTP application
 
 Instructions for running locally
 -----
+Required Erlang version: ```21```
+
 Clone a project from the directory:  
 
 https://github.com/EvgenySverchkov/chat_backend-side<br>
