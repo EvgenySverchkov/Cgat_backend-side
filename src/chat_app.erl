@@ -10,14 +10,17 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    Dispatch = cowboy_router:compile([
-        {'_', [{"/", hello_handler, []}]}
+    Dispatch = cowboy_router:compile([%% todo: {"/auth/:type/[...]", service_reports, []}
+        {'_', [
+            {"/", messages_handler, []},
+            {"/auth/:type/[...]", login_handler, []},
+            {"/get_users", get_users_handler, []}
+        ]}
     ]),
     {ok, _} = cowboy:start_clear(my_http_listener,
         [{port, 8080}],
         #{env => #{dispatch => Dispatch}}
     ),
-%%    my_gen_server:start_link(),
     chat_sup:start_link().
 
 stop(_State) ->

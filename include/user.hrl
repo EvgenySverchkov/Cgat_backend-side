@@ -1,1 +1,1 @@
--record(user, {id, name, password, pid}).
+-record(user, {id, login, password, pid}).

@@ -1,4 +1,4 @@
-#{id=>1, name=> <<"Alex">>, password=> <<"123456">>}.
-#{id=>2, name=> <<"Genadii">>, password=> <<"123456">>}.
-#{id=>3, name=> <<"John Doe">>, password=> <<"123456">>}.
-#{id=>4, name=> <<"Mary">>, password=> <<"123456">>}.
+#{id=> 1, login=> <<"Alex">>, password=> <<"1">>}.
+#{id=> 2, login=> <<"Genadii">>, password=> <<"2">>}.
+#{id=> 3, login=> <<"John Doe">>, password=> <<"3456">>}.
+#{id=> 4, login=> <<"Mary">>, password=> <<"56">>}.

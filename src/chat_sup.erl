@@ -7,6 +7,8 @@
 
 -behaviour(supervisor).
 
+-include("session.hrl").
+
 -export([start_link/0]).
 
 -export([init/1]).
@@ -29,13 +31,13 @@ start_link() ->
 
 
 init([]) ->
-%%    my_gen_server:start_link(),
+    init_ets_sessions(),
     SupFlags = #{strategy => one_for_all,
                  intensity => 0,
                  period => 1},
     ChildSpecs = [{
         my_gen_server,
-        {my_gen_server,start_link,[]},
+        {messages_gen_server,start_link,[]},
         permanent,
         5000,
         worker,
@@ -43,3 +45,6 @@ init([]) ->
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions
+
+init_ets_sessions() ->
+    ets:new(sessions, [set, public, named_table, {keypos, #sessionRecord.token}]).

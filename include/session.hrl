@@ -1,0 +1,1 @@
+-record(sessionRecord, {token, userLogin}).

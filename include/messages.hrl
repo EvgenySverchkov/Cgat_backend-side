@@ -1,0 +1,1 @@
+-record(message, {id, u_to, u_from, msg, date}).
