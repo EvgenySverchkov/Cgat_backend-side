@@ -10,7 +10,7 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    Dispatch = cowboy_router:compile([%% todo: {"/auth/:type/[...]", service_reports, []}
+    Dispatch = cowboy_router:compile([
         {'_', [
             {"/", messages_handler, []},
             {"/auth/:type/[...]", login_handler, []},

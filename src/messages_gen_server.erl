@@ -37,13 +37,20 @@ init_ets_users() ->
     ets:insert(users, RecordUserList).
 
 handle_cast({handle_msg, ToLogin, FromLogin, MsgInfo}, State) ->
-    MapInfo = #{u_to => MsgInfo#message.u_to, u_from => MsgInfo#message.u_from, id => MsgInfo#message.id, msg => MsgInfo#message.msg, date => MsgInfo#message.date},
-    ChangedMapInfo = #{u_to => ToLogin, u_from => FromLogin, id => MsgInfo#message.id, msg => MsgInfo#message.msg, date => MsgInfo#message.date},
-    dets:insert(messages, MsgInfo),
+    CurrTime = erlang:system_time(millisecond),
+    MsgMapInfo = #{
+        u_to => ToLogin,
+        u_from => FromLogin,
+        id => MsgInfo#message.id,
+        msg => MsgInfo#message.msg,
+        date => CurrTime
+    },
+    FullMsgMapInfo = #{type=><<"message">>, data=>MsgMapInfo},
+    dets:insert(messages, MsgInfo#message{date=CurrTime}),
     PidFrom = ets:lookup_element(users, FromLogin, #user.pid),
     PidTo = ets:lookup_element(users, ToLogin, #user.pid),
-    is_pid(PidFrom) andalso (PidFrom ! {send_msg, ChangedMapInfo}),
-    is_pid(PidTo) andalso (PidTo ! {send_msg, ChangedMapInfo}),
+    is_pid(PidFrom) andalso (PidFrom ! {send_msg, FullMsgMapInfo}),
+    is_pid(PidTo) andalso (PidTo ! {send_msg, FullMsgMapInfo}),
     {noreply, State}.
 
 handle_info(_Msg, State) ->

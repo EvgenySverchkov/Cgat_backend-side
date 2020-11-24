@@ -36,12 +36,12 @@ init([]) ->
                  intensity => 0,
                  period => 1},
     ChildSpecs = [{
-        my_gen_server,
+        messages_gen_server,
         {messages_gen_server,start_link,[]},
         permanent,
         5000,
         worker,
-        [my_gen_server]}],
+        [messages_gen_server]}],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions

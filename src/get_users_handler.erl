@@ -9,6 +9,7 @@
 -module(get_users_handler).
 -author("С").
 -include("user.hrl").
+-include("session.hrl").
 
 %% API
 -export([init/2]).
@@ -21,7 +22,7 @@
 
 init(Req0 = #{method := <<"POST">>}, State) ->
     Cookies = cowboy_req:parse_cookies(Req0),
-    Result = lists:keyfind(<<"usersession">>, 1, Cookies),
+    Result = proplists:get_value(<<"usersession">>, Cookies),
     check_session(Result, Req0, State);
 
 init(Req0 = #{method := <<"OPTIONS">>}, State) ->
@@ -39,9 +40,9 @@ get_users(CurrUserLogin) ->
             (_) -> false end,
         List).
 
-check_session({_, CookieToken}, Req0, State) ->
+check_session(CookieToken, Req0, State) ->
     case ets:lookup(sessions, CookieToken) of
-        [{_, _Token, Login}] ->
+        [#sessionRecord{userLogin = Login, token = _Token}] ->
             Req1 = cowboy_req:reply(200, ?HEADERS, handler(Login), Req0),
             {ok, Req1, State};
         [] ->

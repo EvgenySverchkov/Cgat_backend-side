@@ -14,6 +14,7 @@
 -author("С").
 -include("user.hrl").
 -include("messages.hrl").
+-include("session.hrl").
 
 %% API
 -export([init/2, websocket_init/1, websocket_handle/2, websocket_info/2]).
@@ -33,7 +34,7 @@ send_request({_, CookieToken}, State, Req0) ->
 send_request2([], State, Req0) ->
     Req1 = cowboy_req:reply(401, Req0),
     {ok, Req1, State};
-send_request2([{_, _Token, Login}], State, Req0) ->
+send_request2([#sessionRecord{userLogin = Login}], State, Req0) ->
     case cowboy_req:parse_header(<<"sec-websocket-protocol">>, Req0) of
         undefined ->
             {cowboy_websocket, Req0, [{user_login, Login}|State]};
@@ -50,14 +51,12 @@ send_request2([{_, _Token, Login}], State, Req0) ->
     end.
 
 websocket_init(State) ->
-    {_, CurrUserLogin} = lists:keyfind(user_login, 1, State),
+    CurrUserLogin = proplists:get_value(user_login, State),
     ets:update_element(users, CurrUserLogin, {#user.pid, self()}),
     {ok, State}.
 
 websocket_info({send_msg, Msg}, State) ->
-    FullObj = #{type=><<"message">>, data=>Msg},
-    Json = jsone:encode(FullObj),
-    {reply, {text, Json}, State}.
+    {reply, {text, jsone:encode(Msg)}, State}.
 
 websocket_handle({text, Value}, State) ->
     Map = jsone:decode(Value),
@@ -83,18 +82,15 @@ method_handler(<<"get_history">>, #{<<"login">> := LoginTo}, State) ->
     Json = jsone:encode(FullObj),
     {reply, {text, Json}, State};
 
-method_handler(<<"send_msg">>, #{<<"text">> := <<>>, <<"date">> := Date, <<"to">> := ToUserLogin}, State) ->
+method_handler(<<"send_msg">>, #{<<"text">> := <<>>}, State) ->
     {ok,State};
-method_handler(<<"send_msg">>, #{<<"text">> := MsgText, <<"date">> := Date, <<"to">> := ToUserLogin}, State) ->
+method_handler(<<"send_msg">>, #{<<"text">> := MsgText, <<"to">> := ToUserLogin}, State) ->
     CurrUserLogin = proplists:get_value(user_login, State),
     CurrUserIdFromEts = ets:lookup_element(users, CurrUserLogin, #user.id),
     ToUserIdFromEts = ets:lookup_element(users, ToUserLogin, #user.id),
     {Num1, Num2, Num3} = os:timestamp(),
     UniqId = Num1 + Num2 + Num3,
-%%    {To, From} = if CurrUserIdFromEts > ToUserIdFromEts -> {ToUserIdFromEts, CurrUserIdFromEts};
-%%                     true ->{CurrUserIdFromEts, ToUserIdFromEts}
-%%                 end,
     gen_server:cast(
-        messages_gen_server, {handle_msg, ToUserLogin, CurrUserLogin, #message{id = UniqId, u_to = ToUserIdFromEts, u_from = CurrUserIdFromEts, msg = MsgText, date = Date}}),
+        messages_gen_server, {handle_msg, ToUserLogin, CurrUserLogin, #message{id = UniqId, u_to = ToUserIdFromEts, u_from = CurrUserIdFromEts, msg = MsgText}}),
     {ok,State}.
 

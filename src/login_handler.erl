@@ -35,7 +35,7 @@ postHandler(no_validate, Req0) ->
     cowboy_req:reply(200, ?HEADERS, json_wrong_msg(<<"Wrong login or password">>), Req0);
 postHandler({Login, SessionId}, Req0) ->
     ReqJson = jsone:encode(#{success=>true, msg=><<"Success login">>, login => Login}),
-    Req1 = cowboy_req:set_resp_cookie(<<"usersession">>, SessionId, Req0, #{max_age => 3600000, path => "/", http_only => false, same_site => lax}), %%todo: rename cookie, save map to const
+    Req1 = cowboy_req:set_resp_cookie(<<"usersession">>, SessionId, Req0, #{max_age => 3600000, path => "/", http_only => true, same_site => lax}), %%todo: rename cookie, save map to const
     cowboy_req:reply(200, ?HEADERS, ReqJson, Req1).
 
 json_wrong_msg(Message) -> jsone:encode(#{success=>false, msg=> Message}).
